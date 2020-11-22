@@ -46,7 +46,7 @@ namespace SparseMatrices
 
         public double[] MultiplyWithVector(double[] packedStorageCol, double[] vector)
         {
-
+            return new double[5];
         }
 
         public double this[int indexRow, int indexColumn]
