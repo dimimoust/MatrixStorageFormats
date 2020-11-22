@@ -11,6 +11,7 @@ namespace SparseMatrices
             int length = matrix.GetLength(0);
             double[] array = new double[length];
 
+            
             int i = 0;
             int j = 0;
             while (i == j && i < length)
