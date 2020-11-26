@@ -4,55 +4,76 @@ using System.Text;
 
 namespace SparseMatrices
 {
-    public class Skyline : NonZerosEntriesSym
+    public class Skyline
     {
+        public Skyline()
+        {
+            _listValues = new List<double>();
+            _listDiagOffsets = new List<int>();
+        }
         public double[] SkylineStorage(double[,] matrix)
         {
             int rows = matrix.GetLength(0);
             int columns = matrix.GetLength(1);
-            int nonzerosentries = FindNonZeroEntries(matrix);
-            double[] values = new double[nonzerosentries];
-            double[] col_indices = new double[nonzerosentries];
-            double[] diag_offsets = new double[columns + 1];
-            double[] row_indices = new double[nonzerosentries];
-            double[] array = new double[rows * columns];
-            double[] active_column = new double[columns];
-            int k = 0; 
+            double[,] matrixSkyLine = new double[rows,columns];
+            double[] activeColumn = new double[columns];
             int n = 0;
-            for (int index_row = 0; index_row < rows; index_row++)
+            for (int indexRow = 0; indexRow < rows; indexRow++)
             {
-                for (int index_column = 0; index_column < columns; index_column++)
+                for (int indexColumn = indexRow; indexColumn >= 0; indexColumn--)
                 {
-                    if (index_row <= index_column)
+                    if (matrix[indexRow, indexColumn] != 0)
                     {
-                        if (matrix[index_row, index_column] != 0)
+                        _listValues.Add(matrix[indexRow, indexColumn]);
+                        if (indexRow == indexColumn)
                         {
-                            values[k] = (matrix[index_row, index_column]);
-                            k++;
-                            if (index_row == index_column)
-                            {
-                                diag_offsets[n] = n;
-                                n++;
-                            }
-                            diag_offsets[columns] = nonzerosentries;
-                        }                       
+                            _listDiagOffsets.Add(n);
+                        }
+                        n++;
                     }
-                }                
-            }
-            for (int j = 0; j < columns; j++)
-            {
-                active_column[j] = diag_offsets[j + 1] - diag_offsets[j] - 1;
+                }
             }
 
-            for (int index_row = 0; index_row < rows; index_row++)
+            _listDiagOffsets.Add(_listValues.Count);
+            int[] diagOffsets = _listDiagOffsets.ToArray();
+            double[] values = _listValues.ToArray();
+
+            for (int j = 0; j < columns; j++)
             {
-                for (int index_column = 0; index_column < columns; index_column++)
+                activeColumn[j] = diagOffsets[j + 1] - diagOffsets[j] - 1;
+            }
+
+            int m = 0;
+            var matrixDOK = new Dictionary<int, Dictionary<int, double>>();
+            for (int i = 0; i < m; i++)
+            {
+                matrixDOK[i] = new Dictionary<int, double>();
+            }
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
                 {
-                   //matrix[index_column,index_row] = values[diag_offsets[index_column] + index_column - index_row];
+                    if (j >= i)
+                    {
+                        if (j - i <= activeColumn[j])
+                        {
+                            var a = diagOffsets[j] + j - i;
+                            matrixSkyLine[i, j] = values[diagOffsets[j] + j - i];
+                        }
+                        else
+                        {
+                            matrixSkyLine[i, j] = 0;
+                        }
+                    }
+                    matrixSkyLine[j, i] = matrixSkyLine[i, j];
                 }
             }
             return values;
         }
+
+        List<double> _listValues;
+        List<int> _listDiagOffsets;
     }
 }
 

@@ -1,35 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SparseMatrices
 {
-    public class CoordinateList : NonZerosEntries
-    {       
+    public class CoordinateList
+    {
+        public CoordinateList()
+        {
+            _listvalues = new List<double>();
+            _listrows = new List<double>();
+            _listcolumns = new List<double>();
+        }
+
         public (double[] values, double[] rows, double[] columns) CoordinateListStorage(double[,] matrix)
         {
             int row = matrix.GetLength(0);
             int column = matrix.GetLength(1);
-            int nonzerosentries = FindNonZeroEntries(matrix);
-            double[] values = new double[nonzerosentries];
-            double[] rows = new double[nonzerosentries];
-            double[] columns = new double[nonzerosentries];
-            int k = 0;
-            for (int index_row = 0; index_row < row; index_row++)
+            for (int indexRow = 0; indexRow < row; indexRow++)
             {
-                for (int index_column = 0; index_column < column; index_column++)
+                for (int indexColumn = 0; indexColumn < column; indexColumn++)
                 {
-                    if (matrix[index_row, index_column] != 0)
+                    if (matrix[indexRow, indexColumn] != 0)
                     {
-                        values[k] = (matrix[index_row, index_column]);
-                        rows[k] = index_row;
-                        columns[k] = index_column;
-                        k++;
+                        _listvalues.Add(matrix[indexRow, indexColumn]);
+                        _listrows.Add(indexRow);
+                        _listcolumns.Add(indexColumn);
                     }
                 }
             }
-            
+
+            double[] values = _listvalues.ToArray();
+            double[] rows = _listrows.ToArray();
+            double[] columns = _listcolumns.ToArray();
             return (values,rows,columns);
         }
+
+        List<double> _listvalues;
+        List<double> _listrows;
+        List<double> _listcolumns;
     }
 }

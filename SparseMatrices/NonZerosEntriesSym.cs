@@ -8,7 +8,7 @@ namespace SparseMatrices
     {
         public NonZerosEntriesSym()   //constructor
         {
-            list = new List<double>();
+            _list = new List<double>();
         }
         public int FindNonZeroEntries(double[,] matrix)
         {
@@ -17,23 +17,23 @@ namespace SparseMatrices
             //List<double> list = new List<double>();     2nd way for initialization list
             int nnz = 0;
             double[] inof = new double[row+1];
-            for (int index_row = 0; index_row < row; index_row++)
+            for (int indexRow = 0; indexRow < row; indexRow++)
             {
-                for (int index_column = 0; index_column < column; index_column++)
+                for (int indexColumn = 0; indexColumn < column; indexColumn++)
                 {
-                    if (index_row <= index_column )
+                    if (indexRow <= indexColumn )
                     {
-                        if (matrix[index_row, index_column] != 0)
+                        if (matrix[indexRow, indexColumn] != 0)
                         {
-                            list.Add(matrix[index_row, index_column]);
+                            _list.Add(matrix[indexRow, indexColumn]);
                             nnz++;
                         }
                     }                    
                 }
             }
-            int nonzerosentries = list.Count;
+            int nonzerosentries = _list.Count;
             return nonzerosentries;
         }
-        List<double> list;
+        List<double> _list;
     }
 }

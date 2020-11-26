@@ -1,50 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SparseMatrices
 {
-    public class CompressedSparseRows : NonZerosEntries
+
+    public class CompressedSparseRows
     {
-        public (double[] values, double[] col_indices) CSRstorage(double[,] matrix)
+        public CompressedSparseRows()
         {
-            //, double[] row_offsets
+            _listValues = new List<double>();
+            _listColIndices = new List<double>();
+        }
+
+        public (double[] values, double[] colindices, double[] rowoffsets) CSRstorage(double[,] matrix)
+        {
             int row = matrix.GetLength(0);
             int column = matrix.GetLength(1);
-            int nonzerosentries = FindNonZeroEntries(matrix);
-            double[] values = new double[nonzerosentries];
-            double[] col_indices = new double[nonzerosentries];
-            double[] row_offsets = new double[row + 1];
-            double[] row_indices = new double[nonzerosentries];
-            double[] array = new double[row*column];
-            int k = 0;
-            int m = 0;
-            for (int index_row = 0; index_row < row; index_row++)
+            double[] rowoffsets = new double[row + 1];
+            for (int indexRow = 0; indexRow < row; indexRow++)
             {
-                for (int index_column = 0; index_column < column; index_column++)
+                for (int indexColumn = 0; indexColumn < column; indexColumn++)
                 {
-                    if (matrix[index_row, index_column] != 0)
+                    if (matrix[indexRow, indexColumn] != 0)
                     {
-                        values[k] = (matrix[index_row, index_column]);
-                        col_indices[k] = index_column;
-                        row_indices[k] = index_row;
+                        _listValues.Add(matrix[indexRow, indexColumn]);
+                        _listColIndices.Add(indexColumn);
+                    }
 
-                        k++;
+                    if (matrix[0, indexColumn] != 0)
+                    {
+                        rowoffsets[0] = 0;
                     }
                 }
-            }
-           /* for (int n = 0; n < row_indices.Length; n++)
-            {
-                if (row_indices[n + 1] != row_indices[n])
-                {
-                    row_offsets[m] = n;
-                    m++;
-                }
-                
-            }*/
-            
 
-            return (values, col_indices);
+                rowoffsets[indexRow + 1] = _listValues.Count;
+            }
+
+            rowoffsets[row] = _listValues.Count;
+
+            double[] values = _listValues.ToArray();
+            double[] colIndices = _listColIndices.ToArray();
+
+            return (values, colIndices, rowoffsets);
         }
+
+        List<double> _listValues;
+        List<double> _listColIndices;
     }
+
 }
