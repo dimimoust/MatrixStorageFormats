@@ -39,8 +39,24 @@
             return array;
         }
 
-
-        public double[] MultiplyWithVector(double[] packedStorageCol, double[] vector)
+        public double[] MultiplyWithVector(double[,] matrix, double[] vector)
+        {
+            PackedStorage a = new PackedStorage();
+            double[] array = a.Row_Major_Layout(matrix);
+            double[] y = new double[vector.Length];
+            int n = 0;
+            for (int i = 0; i < vector.Length; i++)
+            {
+                y[i] = 0;
+                for (int k = i; k < vector.Length;  k++)
+                {
+                    y[i] = y[i] + array[n]*vector[k];
+                    n++;
+                }
+            }
+            return y;
+        }
+       /* public double[] MultiplyWithVector(double[] packedStorageCol, double[] vector)
         {
             return new double[5];
         }
@@ -48,6 +64,6 @@
         public double this[int indexRow, int indexColumn]
         {
             get { return 5; }
-        }
+        }*/
     }
 }

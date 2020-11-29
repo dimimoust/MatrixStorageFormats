@@ -21,7 +21,19 @@
                 array[i] = matrix[i, i];
             }
             return array;
+        }
 
+        public double[] DiagonalVectorMultiplication(double[] vector , double[,] matrix)
+        {
+            Diagonal diagonal = new Diagonal();
+            double[] array = diagonal.DiagonalMatrices(matrix);
+            double[] product = new double[matrix.GetLength(1)];
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                product[i] = array[i] * vector[i];
+            }
+
+            return product;
         }
     }
 }

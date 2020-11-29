@@ -43,12 +43,12 @@ namespace SparseMatrices
                 activeColumn[j] = diagOffsets[j + 1] - diagOffsets[j] - 1;
             }
 
-            int m = 0;
+            /*int m = 0;
             var matrixDOK = new Dictionary<int, Dictionary<int, double>>();
             for (int i = 0; i < m; i++)
             {
                 matrixDOK[i] = new Dictionary<int, double>();
-            }
+            }*/
 
             for (int i = 0; i < rows; i++)
             {
@@ -58,7 +58,6 @@ namespace SparseMatrices
                     {
                         if (j - i <= activeColumn[j])
                         {
-                            var a = diagOffsets[j] + j - i;
                             matrixSkyLine[i, j] = values[diagOffsets[j] + j - i];
                         }
                         else

@@ -7,11 +7,11 @@ namespace SparseMatrices
         public CoordinateList()
         {
             _listvalues = new List<double>();
-            _listrows = new List<double>();
-            _listcolumns = new List<double>();
+            _listrows = new List<int>();
+            _listcolumns = new List<int>();
         }
 
-        public (double[] values, double[] rows, double[] columns) CoordinateListStorage(double[,] matrix)
+        public (double[] values, int[] rows, int[] columns) CoordinateListStorage(double[,] matrix)
         {
             int row = matrix.GetLength(0);
             int column = matrix.GetLength(1);
@@ -29,13 +29,31 @@ namespace SparseMatrices
             }
 
             double[] values = _listvalues.ToArray();
-            double[] rows = _listrows.ToArray();
-            double[] columns = _listcolumns.ToArray();
+            int[] rows = _listrows.ToArray();
+            int[] columns = _listcolumns.ToArray();
             return (values,rows,columns);
         }
 
         List<double> _listvalues;
-        List<double> _listrows;
-        List<double> _listcolumns;
+        List<int> _listrows;
+        List<int> _listcolumns;
+
+        public double[] CoordListvectorMultiplication(double[] vector, double[,] matrix)
+        {
+            CoordinateList coordinatelist = new CoordinateList();
+            (double[] values, int[] rows, int[] columns) = coordinatelist.CoordinateListStorage(matrix);
+
+            double[] product = new double[matrix.GetLength(0)];
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                product[i] = 0;
+            }
+            for (int k = 0 ; k < values.Length; k++)
+            {
+                product[rows[k]] = product[rows[k]] + values[k]*vector[columns[k]];
+            }
+            
+            return product;
+        }
     }
 }
