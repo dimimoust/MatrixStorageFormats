@@ -1,14 +1,42 @@
 ﻿using System.Collections.Generic;
+using SparseMatrices.Interfaces;
 
 namespace SparseMatrices
 {
 
-    public class CompressedSparseColumns
+    public class CompressedSparseColumns:IMatrix
     {
-        public CompressedSparseColumns()
+        private double[] values;
+        private int[] rowIndices;
+        private int[] colOffsets;
+
+        public double[] Values
+        {
+            get => values;
+            set => values = value;
+        }
+        public int[] RowIndices
+        {
+            get => rowIndices;
+            set => rowIndices = value;
+        }
+
+        public int[] ColOffsets
+        {
+            get => colOffsets;
+            set => colOffsets = value;
+        }
+        public CompressedSparseColumns(double[,] matrix)
         {
             _listvalues = new List<double>();
             _listRowIndices = new List<int>();
+
+            var (values, rowIndices, colOffsets) = CSCstorage(matrix);
+
+            this.Values = values;
+            this.RowIndices = rowIndices;
+            this.ColOffsets = colOffsets;
+
         }
 
         public (double[] values, int[] rowindices, int[] coloffsets) CSCstorage(double[,] matrix)
@@ -45,27 +73,27 @@ namespace SparseMatrices
         List<double> _listvalues;
         List<int> _listRowIndices;
 
-
-        public double[] CSCvectorMultiplication(double[] vector, double[,] matrix)
+        public double[] Multiplication(double[] vector)
         {
-            CompressedSparseColumns csr = new CompressedSparseColumns();
-            (double[] values, int[] rowIndices, int[] coloffsets) = csr.CSCstorage(matrix);
+            //CompressedSparseColumns csr = new CompressedSparseColumns();
+            //(double[] values, int[] rowIndices, int[] coloffsets) = csr.CSCstorage(matrix);
 
-            double[] product = new double[matrix.GetLength(1)];
-            for (int i = 0; i < matrix.GetLength(0); i++)
+            double[] product = new double[vector.Length];
+            for (int i = 0; i < vector.Length; i++)
             {
                 product[i] = 0;
             }
 
-            for (int i = 0; i < matrix.GetLength(0); i++)
+            for (int i = 0; i < vector.Length; i++)
             {
-                for (int k = coloffsets[i]; k < coloffsets[i + 1]; k++)
+                for (int k = colOffsets[i]; k < colOffsets[i + 1]; k++)
                 {
-                   product[rowIndices[k]] = product[rowIndices[k]] + values[k] * vector[i];
+                    product[rowIndices[k]] = product[rowIndices[k]] + values[k] * vector[i];
                 }
             }
 
             return product;
+
         }
     }
 

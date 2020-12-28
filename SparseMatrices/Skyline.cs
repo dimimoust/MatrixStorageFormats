@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SparseMatrices
 {
     public class Skyline
     {
-        private readonly double[,] Matrix;
+        //private readonly double[,] DenseMatrix;
         private double[] values;
         private int[] diagOffSets;
 
@@ -15,6 +13,7 @@ namespace SparseMatrices
             get => values;
             set => values = value;
         }
+
         public int[] DiagOffSets
         {
             get => diagOffSets;
@@ -24,25 +23,30 @@ namespace SparseMatrices
         public Skyline(double[,] matrix)
         {
             _listValues = new List<double>();
-            this.Matrix = matrix;
-            var (_, skyValues ,skyDiagOffsets) = SkylineStorage(matrix);
+            //this.DenseMatrix = matrix;
+            var (_, skyValues, skyDiagOffsets, _, _) = SkylineStorage(matrix);
             this.Values = skyValues;
             this.DiagOffSets = skyDiagOffsets;
         }
 
-        public double this[int i, int j]
-        {
-            get => Matrix[i, j];
-            set => Matrix[i, j] = value;
-        }
+        //public double this[int i, int j]
+        //{
+        //    get => DenseMatrix[i, j];
+        //    set => DenseMatrix[i, j] = value;
+        //}
 
-        public (double[,] ,double[] , int[] ) SkylineStorage(double[,] matrix)
+        public (double[,], double[], int[], double[], int[]) SkylineStorage(double[,] matrix)
         {
             int rows = matrix.GetLength(0);
             int columns = matrix.GetLength(1);
             double[,] matrixSkyLine = new double[rows, columns];
             int[] activeColumn = new int[columns];
             int[] height = new int[columns];
+            double[] diagonal = new double[rows];
+            for (int i = 0; i < rows; i++)
+            {
+                diagonal[i] = matrix[i, i];
+            }
 
             for (int indexColumn = 0; indexColumn < columns; indexColumn++)
             {
@@ -81,12 +85,14 @@ namespace SparseMatrices
             {
                 _listValues.Add(matrix[0, 0]);
             }
+
             for (int indexRow = 1; indexRow < rows; indexRow++)
             {
-                for (int indexColumn = indexRow; indexColumn >= height[indexColumn] && indexColumn > 0; indexColumn--)
+                for (int indexColumn = indexRow; indexColumn >= height[indexRow] && indexColumn > 0; indexColumn--)
                 {
                     _listValues.Add(matrix[indexRow, indexColumn]);
                 }
+
                 if (matrix[0, indexRow] != 0)
                 {
                     _listValues.Add(matrix[0, indexRow]);
@@ -133,11 +139,12 @@ namespace SparseMatrices
                 }
             }
 
-            return (matrixSkyLine, values , diagOffsets);
+            return (matrixSkyLine, values, diagOffsets, diagonal, activeColumn);
         }
 
         List<double> _listValues;
+
     }
 }
 
-
+   

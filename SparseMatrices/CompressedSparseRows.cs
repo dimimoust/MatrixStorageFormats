@@ -1,16 +1,45 @@
 ﻿using System.Collections.Generic;
+using SparseMatrices.Interfaces;
 
 namespace SparseMatrices
 {
 
-    public class CompressedSparseRows
+    public class CompressedSparseRows:IMatrix
     {
-        public CompressedSparseRows()
+        private double[] values;
+        private int[] colIndices;
+        private int[] rowoffsets;
+
+        public double[] Values
+        {
+            get => values;
+            set => values = value;
+        }
+
+        public int[] ColIndices
+        {
+            get => colIndices;
+            set => colIndices = value;
+        }
+
+        public int[] RowOffsets
+        {
+            get => rowoffsets;
+            set => rowoffsets = value;
+        }
+
+        public CompressedSparseRows(double[,] matrix)
         {
             _listValues = new List<double>();
             _listColIndices = new List<int>();
-        }
 
+            var (values, colindices, rowoffsets) = CSRstorage(matrix);
+
+            this.Values = values;
+            this.ColIndices = colindices;
+            this.RowOffsets = rowoffsets;
+        }
+        
         public (double[] values, int[] colindices, int[] rowoffsets) CSRstorage(double[,] matrix)
         {
             int row = matrix.GetLength(0);
@@ -48,24 +77,23 @@ namespace SparseMatrices
         List<double> _listValues;
         List<int> _listColIndices;
 
-
-        public double[] CSRvectorMultiplication(double[] vector, double[,] matrix)
+        public double[] Multiplication(double[] vector)
         {
-            CompressedSparseRows csr = new CompressedSparseRows();
-            (double[] values, int[] colIndices, int[] rowoffsets) = csr.CSRstorage(matrix);
 
-            double[] product = new double[matrix.GetLength(0)];
-            for (int i = 0; i < matrix.GetLength(0) ; i++)
+            //CompressedSparseRows csr = new CompressedSparseRows(matrix);
+           // (double[] values, int[] colIndices, int[] rowoffsets) = csr.CSRstorage(matrix);
+
+            double[] product = new double[vector.Length];
+            for (int i = 0; i < vector.Length; i++)
             {
                 product[i] = 0;
-                for (int k = rowoffsets[i]; k < rowoffsets[i + 1] ; k++)
+                for (int k = rowoffsets[i]; k < rowoffsets[i + 1]; k++)
                 {
                     product[i] = product[i] + values[k] * vector[colIndices[k]];
                 }
             }
             return product;
         }
-
     }
 
 }

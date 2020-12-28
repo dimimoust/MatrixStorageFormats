@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SparseMatrices
 {
@@ -7,66 +6,66 @@ namespace SparseMatrices
     {
         static void Main()
         {
-            double[,] skymatrix = { { 1, 0, 1, 0, 8, 5 }, { 0, 2, 0, 1, 0, 0 }, { 1, 0, 3, 1, 0, 1 }, { 0, 1, 1, 4, 0, 0 }, { 8, 0, 0, 0, 5, 1 }, { 5, 0, 4, 0, 1, 6 } };
+            // 1. Full/Dense DenseMatrix Multiplication
+            double[,] matrix = {{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {3, 4, 6, 7, 8}, {8, 4, 9, 6, 7}, {2, 6, 9, 3, 45}};
+            double[] vector = {1, 2, 3, 4, 5};
+            DenseMatrix denseMatrix = new DenseMatrix(matrix);
+            denseMatrix.Multiplication(vector);
+
+            // 2. Diagonal DenseMatrix
+            double[,] matrix2 = { { 1, 0, 0, 0 }, { 0, 5, 0, 0 }, { 0, 0, 6, 0 }, { 0, 0, 0, 8 } };
+            double[] vector2 = { 2, 4, 5, 2 };
+            Diagonal diagonal = new Diagonal(matrix2);
+            double[] result1 = diagonal.Multiplication(vector2);
+
+            // 3. Coordinate List
+            double[,] matrix3 = { { 9, 0, 3, 0 }, { 0, 8, 0, 0 }, { 0, 2, 6, 0 }, { 1, 0, 0, 5 } };
+            CoordinateList coordList = new CoordinateList(matrix3);
+            double[] result3 = coordList.Multiplication(vector2);
+
+            // 4. CompressedSparseColumns
+            CompressedSparseColumns compressedSparseColumns = new CompressedSparseColumns(matrix3);
+            double[] result4 = compressedSparseColumns.Multiplication(vector2);
+
+            // 5. CompressedSparseRows
+            CompressedSparseColumns compressedSparseRows = new CompressedSparseColumns(matrix3);
+            double[] result5 = compressedSparseRows.Multiplication(vector2);
+
+            // 6. Dictionary of Keys
+            DictionaryOfKeys dictionaryOfKeys = new DictionaryOfKeys(matrix3);
+
+            // 7. Banded
+            double[,] banmatrix =
+            {
+                {1, 0, 1, 0, 8, 5, 0, 0, 0, 0, 0},
+                {0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+                {1, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0},
+                {8, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0},
+                {5, 0, 4, 0, 1, 6, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            };
+
+            // 8. PackedStorage
+            double[,] matrix8 = { { 9, 0, 3, 0 }, { 0, 8, 6, 5 }, { 3, 6, 7, 4 }, { 0, 5, 4, 8 } };
+            PackedStorage array = new PackedStorage();
+            (double[], int[], int[]) packedArrayColumn = array.Row_Major_Layout(matrix8);
+            (double[], int[], int[]) packedArrayRow = array.Column_Major_Layout(matrix8);
+
+            // 9. SkyLine Storege
+            double[,] skymatrix = { { 1, 0, 1, 0, 8, 5 }, 
+                                    { 0, 2, 0, 1, 0, 0 }, 
+                                    { 1, 0, 3, 1, 0, 1 },
+                                    { 0, 1, 1, 4, 0, 0 }, 
+                                    { 8, 0, 0, 0, 5, 1 }, 
+                                    { 5, 0, 4, 0, 1, 6 } };
             Skyline skyline = new Skyline(skymatrix);
-            Console.WriteLine($"The products of Skyline Storage are Values = {skyline.Values} and DiagOffSets = {skyline.DiagOffSets} ");
-            //double[,] matrix = { { 1, 2, 3 }, { 0, 2, 0 }, { 0, 5, 3 } };
-            //double[] vector = { 1, 2, 3 };
-            //MatrixOperations multiplication = new MatrixOperations(matrix, vector);
-            //Console.WriteLine($"Multiplication result is = {multiplication.Result}");
-            //double[] matrixp = { 8, 2, 3, 5, 4, 6, };
-            //double[,] matrix = { { 1, 2, 3 }, { 0, 2, 0 }, { 0, 5, 3 } };
-            //double[,] skymatrix = { { 1, 0, 1, 0, 8, 5 }, { 0, 2, 0, 1, 0, 0 }, { 1, 0, 3, 1, 0, 1 }, { 0, 1, 1, 4, 0, 0 }, { 8, 0, 0, 0, 5, 1 }, { 5, 0, 4, 0, 1, 6 } };
-            //double[,] banmatrix =
-            //{
-            //    {1, 0, 1, 0, 8, 5, 0, 0, 0, 0, 0},
-            //    {0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-            //    {1, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0},
-            //    {0, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0},
-            //    {8, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0},
-            //    {5, 0, 4, 0, 1, 6, 0, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            //};
-            //double[,] band2 =
-            //{
-            //    {1, 2, 0, 3, 0, 0, 0, 0},
-            //    {2, 4, 5, 1, 0, 0, 0, 0},
-            //    {0, 5, 6, 1, 0, 1, 0, 0},
-            //    {3, 1, 1, 7, 0, 0, 0, 0},
-            //    {0, 0, 0, 0, 8, 1, 0, 0},
-            //    {0, 0, 1, 0, 1, 9, 0, 0},
-            //    {0, 0, 0, 0, 0, 0, 10, 0},
-            //    {0, 0, 0, 0, 0, 0, 0, 11},
-            //};
-            //double[] vector = { 2, 4, 5, 2 };
-            //CompressedSparseColumns arrayCSR = new CompressedSparseColumns();
-            //double[] CSC = arrayCSR.CSCvectorMultiplication(vector, matrix);
-            //PackedStorage matrixrow = new PackedStorage();
-            //double[] result = matrixrow.MultiplyWithVector(matrixp, vector);
-            //double[,] matrixD = { { 1, 0, 0 }, { 0, 5, 0 }, { 0, 0, 2 } };
-            //double[,] diagonal = { { 1, 0, 0, 4 }, { 0, 5, 3, 5 }, { 0, 3, 6, 0 }, { 4, 5, 0, 8 } };
-            //double[,] csR = { { 9, 0, 3, 0 }, { 0, 8, 0, 0 }, { 0, 2, 6, 0 }, { 1, 0, 0, 5 } };
-            //Banded pinakas = new Banded();
 
-            //var (res, res1, _, _) = pinakas.BandedStorage(band2);
-            //PackedStorage array = new PackedStorage();
-            //(double[], int[], int[]) packedArrayColumn = array.Row_Major_Layout(diagonal);
-            //double[] packedArrayRow = array.MultiplyWithVector(diagonal, vector);
-            //Diagonal arrayD = new Diagonal();
-            //double[] diagonalStorage = arrayD.DiagonalVectorMultiplication(vector, matrixD);
-            //CoordinateList arraycl = new CoordinateList();
-            //double[] result2 = arraycl.CoordListvectorMultiplication(vector, matrix);
-            //var (values, _, columns) = arraycl.CoordinateListStorage(matrix);
-            //CompressedSparseColumns arrayCsr = new CompressedSparseColumns();
-            //(double[], int[], int[]) csr = arrayCsr.CSCstorage(csR);
-            //DictionaryOfKeys arrayDk = new DictionaryOfKeys();
-            //Dictionary<int, Dictionary<int, double>> dok = arrayDk.DOK(matrix);
-
-            //var matrixFull = new Matrix(diagonal);
+            //var matrixFull = new DenseMatrix(diagonal);
             //matrixFull[0, 0]
         }
     }

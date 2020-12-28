@@ -6,7 +6,19 @@ namespace SparseMatrices
 {
     public class DictionaryOfKeys
     {
-        public Dictionary<int, Dictionary<int, double>> DOK(double[,] matrix)
+        private Dictionary<int, Dictionary<int, double>> matrixDOK;
+
+        public Dictionary<int, Dictionary<int, double>> MatrixDictionary
+        {
+            get => matrixDOK;
+            set => matrixDOK = value;
+        }
+        public DictionaryOfKeys(double [,] matrix)
+        {
+            Dictionary<int, Dictionary<int, double>> matrixDOK = DictionaryOfKeysStorage(matrix);
+            this.MatrixDictionary = matrixDOK;
+        }
+        public Dictionary<int, Dictionary<int, double>> DictionaryOfKeysStorage(double[,] matrix)
         {
             int row = matrix.GetLength(0);
             int column = matrix.GetLength(1);
